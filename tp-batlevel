@@ -1,0 +1,12 @@
+#!/bin/bash
+AC=`cat /sys/class/power_supply/AC/online`
+if [ -e /sys/class/power_supply/BAT0 ]; then
+  LEVEL="$(echo `cat /sys/class/power_supply/BAT0/charge_now`*100/`cat /sys/class/power_supply/BAT0/charge_full` | bc)"
+else
+  LEVEL="XX"
+fi
+if [ $AC = 0 ]; then
+  echo $LEVEL
+else
+  echo "AC"
+fi
