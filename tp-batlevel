@@ -1,12 +1,33 @@
 #!/bin/bash
-AC=`cat /sys/class/power_supply/AC/online`
-if [ -e /sys/class/power_supply/BAT0 ]; then
+if [ $# -gt 0 ]; then
+  for PARAM in $*
+  do
+    case $PARAM in
+    -c)
+    	ENABLE_COLOR=1
+	;;
+    esac
+  done
+fi
+if [ `cat /sys/class/power_supply/BAT0/charge_now 2> /dev/null` ]; then
   LEVEL="$(echo `cat /sys/class/power_supply/BAT0/charge_now`*100/`cat /sys/class/power_supply/BAT0/charge_full` | bc)"
 else
   LEVEL="XX"
 fi
-if [ $AC = 0 ]; then
-  echo $LEVEL
+AC=`cat /sys/class/power_supply/AC/online`
+
+if [ $ENABLE_COLOR ]; then
+  if [ $AC -eq 0 ]; then
+    COLOR="\e[1;31m"
+  else
+    COLOR="\e[1;32m"
+  fi
 else
-  echo "AC"
+  LEVEL="AC"
+fi
+
+if [ $ENABLE_COLOR ]; then
+  echo -e "$COLOR$LEVEL\e[0m"
+else
+  echo $LEVEL
 fi
