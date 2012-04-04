@@ -16,10 +16,10 @@ if [ $# -gt 0 ]; then
 fi
 
 if [ -e /sys/class/power_supply/BAT0/charge_now ]; then
-  LEVEL="$(echo `cat /sys/class/power_supply/BAT0/charge_now`*100/`cat /sys/class/power_supply/BAT0/charge_full` | bc)"
+  LEVEL="$((`cat /sys/class/power_supply/BAT0/charge_now`*100/`cat /sys/class/power_supply/BAT0/charge_full`))"
 else
   if [ -e /sys/class/power_supply/BAT0/energy_now ]; then
-    LEVEL="$(echo `cat /sys/class/power_supply/BAT0/energy_now`*100/`cat /sys/class/power_supply/BAT0/energy_full` | bc)"
+    LEVEL="$((`cat /sys/class/power_supply/BAT0/energy_now`*100/`cat /sys/class/power_supply/BAT0/energy_full`))"
   else
     LEVEL="XX"
   fi
@@ -33,7 +33,7 @@ if [ $ENABLE_COLOR ]; then
     COLOR="\e[1;32m"
   fi
 else
-  if [ $AC -gt 0 ]; then
+  if [ $AC -ne 0 ]; then
     LEVEL="AC"
   fi
 fi
