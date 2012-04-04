@@ -6,13 +6,23 @@ if [ $# -gt 0 ]; then
     -c)
     	ENABLE_COLOR=1
 	;;
+	*)
+		echo "tp-batlevel [-c]" 
+		"-- Shows current battery level as a percentage. With -c uses color to indicate AC adapter, rather than 'AC'"
+		exit 1
+	;;
     esac
   done
 fi
-if [ `cat /sys/class/power_supply/BAT0/charge_now 2> /dev/null` ]; then
+
+if [ -e /sys/class/power_supply/BAT0/charge_now ]; then
   LEVEL="$(echo `cat /sys/class/power_supply/BAT0/charge_now`*100/`cat /sys/class/power_supply/BAT0/charge_full` | bc)"
 else
-  LEVEL="XX"
+  if [ -e /sys/class/power_supply/BAT0/energy_now ]; then
+    LEVEL="$(echo `cat /sys/class/power_supply/BAT0/energy_now`*100/`cat /sys/class/power_supply/BAT0/energy_full` | bc)"
+  else
+    LEVEL="XX"
+  fi
 fi
 AC=`cat /sys/class/power_supply/AC/online`
 
@@ -23,7 +33,9 @@ if [ $ENABLE_COLOR ]; then
     COLOR="\e[1;32m"
   fi
 else
-  LEVEL="AC"
+  if [ $AC -gt 0 ]; then
+    LEVEL="AC"
+  fi
 fi
 
 if [ $ENABLE_COLOR ]; then
@@ -31,3 +43,4 @@ if [ $ENABLE_COLOR ]; then
 else
   echo $LEVEL
 fi
+
