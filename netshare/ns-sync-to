@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# TODO: Handle dirs :/
+# TODO: Avoid copying from and to the same file
+# TODO: Use non-hard-coded values for this :P
+
+if [ $# -ne 2 ]; then
+	echo "Usage: $0 host file";
+	exit 1;
+fi
+
+MOUNTS_ROOT=/home/lukas/mounts/
+
+HOST=$1
+FILE=$2
+
+if [ ! -d ${MOUNTS_ROOT}${HOST} ]; then
+	echo "Host not found: ${HOST}" >&2;
+	exit 1;
+fi
+
+CAN_PATH=$(readlink -f "$PWD/$FILE")
+REL_PATH=${CAN_PATH#`echo $MOUNTS_ROOT`tmp/}
+SRC_PATH=${MOUNTS_ROOT}tmp/${REL_PATH}
+DST_PATH=${MOUNTS_ROOT}${HOST}/${REL_PATH}
+
+if [ ! -f $SRC_PATH ]; then
+	echo "Invalid filename: ${SRC_PATH}" >&2;
+	exit 1;
+fi
+
+# This ... doesn't work with unionfs :/
+if [ $SRC_PATH -ef $DST_PATH ]; then
+	echo "Source and destination are the same! ${SRC_PATH} - ${DST_PATH}" >&2;
+	exit 1;
+fi
+
+mkdir -p ${DST_PATH%/*}
+
+# Try to avoid truncating files -- this hopefully won't clash with anything
+cp ${SRC_PATH} ${DST_PATH}.sync-to.tmp
+mv ${DST_PATH}.sync-to.tmp ${DST_PATH}
+
