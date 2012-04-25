@@ -1,4 +1,6 @@
 #!/bin/bash
+#TODO: See ns-sync-to
+
 MOUNTS_ROOT=/mnt/ns/
 
 FILE=$PWD

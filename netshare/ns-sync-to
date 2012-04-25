@@ -3,6 +3,7 @@
 # TODO: Handle dirs :/
 # TODO: Avoid copying from and to the same file
 # TODO: Use non-hard-coded values for this :P
+# TODO: Ensure target is actually mounted, somehow
 
 if [ $# -ne 2 ]; then
 	echo "Usage: $0 host file";
