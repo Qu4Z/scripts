@@ -1,0 +1,37 @@
+#!/bin/bash
+# TODO: Make ssh-back work
+
+usage() {
+cat << EOF
+Usage: slock [-s]
+
+  Lock the screen. 
+
+  -s: Lock only this computer. Used internally. Will still unlock other computers on exit. 
+EOF
+		
+}
+
+SLAVE=false
+if [ $# -ge 1 ]; then
+	if [ $1 = "-h" ]; then
+		usage
+		exit 1
+	fi
+	SLAVE=true
+fi
+
+if ! $SLAVE ; then
+	for HOST in `get-hosts -x`
+	do
+		echo $HOST
+		ssh $HOST "PATH=/usr/local/bin:$PATH DISPLAY=:0 slock -s" &
+	done
+fi
+
+/usr/bin/slock
+
+for HOST in `get-hosts -x`
+do
+	ssh $HOST killall slock
+done

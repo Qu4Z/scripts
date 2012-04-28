@@ -1,0 +1,48 @@
+#!/bin/bash
+usage()
+{ cat << EOF
+usage: $0 [flags]
+
+flags:
+ -h: Show help (this message) and exit
+ -x: Exclude current host
+ -a: Include offline hosts
+EOF
+}
+
+INCLUDE_OFFLINE=false
+INCLUDE_CURRENT=true
+while getopts "ax" OPTION
+do
+  case $OPTION in
+	h)
+		usage
+		exit 1
+		;;
+  	x)
+		INCLUDE_CURRENT=false
+		;;
+	a)
+		INCLUDE_OFFLINE=true
+		;;
+	?)
+		echo "Unknown flag: $OPTION"
+		usage
+		exit 1
+		;;
+  esac
+done
+
+for HOST in `cat ~/.hosts`
+do
+	if [ -z "$HOST" ]; then
+		continue
+	fi
+	if ! $INCLUDE_CURRENT && [ "$HOST" = "`hostname`" ]; then
+		continue
+	fi
+	# TODO: Optimise this.
+	if $INCLUDE_OFFLINE || ping -c 1 $HOST 1>/dev/null 2>&1 ; then
+		echo $HOST
+	fi
+done

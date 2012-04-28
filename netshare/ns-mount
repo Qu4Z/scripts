@@ -1,0 +1,14 @@
+#!/bin/bash
+# TODO: Standard method for data path
+# TODO: Use that here
+fusermount -u /mnt/ns/union
+
+for HOST in `get-hosts -ax`
+do
+	fusermount -u /mnt/ns/$HOST
+done
+
+sshfs kino:/home/lukas/data /mnt/ns/kino -o follow_symlinks
+
+unionfs /mnt/ns/mai=RW:/mnt/ns/kino=RO /mnt/ns/union -o cow
+

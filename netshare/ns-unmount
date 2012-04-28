@@ -1,0 +1,4 @@
+#!/bin/bash
+fusermount -u /mnt/ns/union
+fusermount -u /mnt/ns/kino
+unionfs /mnt/ns/mai=RW /mnt/ns/union/ -o cow
