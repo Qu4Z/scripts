@@ -1,5 +1,5 @@
 #!/bin/bash
-MOUNTS_ROOT=/home/lukas/mounts/
+MOUNTS_ROOT=/mnt/ns/
 
 FILE=$PWD
 
@@ -13,9 +13,10 @@ if [ $# -eq 1 ]; then
 fi
 
 CAN_PATH=$(readlink -f "${FILE}")
-REL_PATH=${CAN_PATH#`echo $MOUNTS_ROOT`tmp/}
 
-if [ ! -f ${MOUNTS_ROOT}tmp/$REL_PATH ]; then
+REL_PATH=${CAN_PATH#`echo $MOUNTS_ROOT`union/}
+
+if [ ! -f ${MOUNTS_ROOT}union/$REL_PATH ]; then
 	echo "Invalid filename: $REL_PATH" >&2;
 	exit 1;
 fi
@@ -23,7 +24,7 @@ fi
 HOSTS=`ls ${MOUNTS_ROOT}`
 for HOST in $HOSTS
 do
-	if [ $HOST != "tmp" -a -f ${MOUNTS_ROOT}${HOST}/${REL_PATH} ]; then
+	if [ $HOST != "union" -a -f ${MOUNTS_ROOT}${HOST}/${REL_PATH} ]; then
 		echo "${HOST}";
 	fi
 done

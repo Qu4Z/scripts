@@ -9,7 +9,7 @@ if [ $# -ne 2 ]; then
 	exit 1;
 fi
 
-MOUNTS_ROOT=/home/lukas/mounts/
+MOUNTS_ROOT=/mnt/ns/
 
 HOST=$1
 FILE=$2
@@ -20,8 +20,8 @@ if [ ! -d ${MOUNTS_ROOT}${HOST} ]; then
 fi
 
 CAN_PATH=$(readlink -f "$PWD/$FILE")
-REL_PATH=${CAN_PATH#`echo $MOUNTS_ROOT`tmp/}
-SRC_PATH=${MOUNTS_ROOT}tmp/${REL_PATH}
+REL_PATH=${CAN_PATH#`echo $MOUNTS_ROOT`union/}
+SRC_PATH=${MOUNTS_ROOT}union/${REL_PATH}
 DST_PATH=${MOUNTS_ROOT}${HOST}/${REL_PATH}
 
 if [ ! -f $SRC_PATH ]; then
